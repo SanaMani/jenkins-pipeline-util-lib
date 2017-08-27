@@ -7,7 +7,7 @@ Please refer to the [Jenkins pipeline shared library guide](https://jenkins.io/d
 To load this library, add the following lines to the beginning of your project's Jenkins file:
 ```
 @Library('jenkins-pipeline-util-lib')
-import com.unibet.ci.*
+import se.henrrich.ci.*
 ```
 
 ## API examples
@@ -28,7 +28,7 @@ testManager.addTestJob this, new TestJob("job alias", 'job name', [job parameter
 ```
 e.g.
 ```
-testManager.addTestJob this, new TestJob("LoginLogout", 'Maria - Web - Login Logout - Pipeline', [string(name: 'test.env', value: "${env.testenv}"), [$class: 'MatrixCombinationsParameterValue', combinations: ['BROWSER=chrome', 'BROWSER=chrome incognito'], description: '', name: 'configurations'], string(name: 'tags', value: "${env.tags}"), string(name: 'testartifactsdir', value: "..\\..\\..\\${JOB_NAME}")])
+testManager.addTestJob this, new TestJob("LoginLogoutTest", 'Web - Login Logout - Pipeline - Test', [string(name: 'test.env', value: "${env.testenv}"), [$class: 'MatrixCombinationsParameterValue', combinations: ['BROWSER=chrome', 'BROWSER=chrome incognito'], description: '', name: 'configurations'], string(name: 'tags', value: "${env.tags}"), string(name: 'testartifactsdir', value: "..\\..\\..\\${JOB_NAME}")])
 ```
 
 * __To add a test report collector for a job:__
@@ -37,8 +37,8 @@ testManager.addTestResultCollector new TestResultCollector("job alias", 'filter'
 ```
 Multiple test report collectors can be added to the same job if more types of reports need to be collected. One example can be in multi-configuration job, test reports are generated within each configuration, so reports from different configurations can be collected by defining multiple test result collectors, e.g.:
 ```
-testManager.addTestResultCollector new TestResultCollector("LoginLogout", 'reports/*chrome.json', 'Maria - Web - Login Logout - Pipeline/BROWSER=chrome', 'aggregate/login/')
-testManager.addTestResultCollector new TestResultCollector("LoginLogout", 'reports/*chrome_incognito.json', 'Maria - Web - Login Logout - Pipeline/BROWSER=chrome incognito', 'aggregate/login/')
+testManager.addTestResultCollector new TestResultCollector("LoginLogoutTest", 'reports/*chrome.json', 'Web - Login Logout - Pipeline - Test/BROWSER=chrome', 'aggregate/login/')
+testManager.addTestResultCollector new TestResultCollector("LoginLogoutTest", 'reports/*chrome_incognito.json', 'Web - Login Logout - Pipeline - Test/BROWSER=chrome incognito', 'aggregate/login/')
 ```
 
 * __To select which tests will be executed:__
@@ -69,7 +69,7 @@ The Maven tool name used here must refer to a pre-configured Maven tool in Jenki
 * __To get version of a Maven dependency from properties tag in the POM.xml file:__
 ```
 def pom = script.readMavenPom file: 'pom.xml'
-def version = MavenTool.getMvnDependencyVersion pom, 'unitard.core.version'
+def version = MavenTool.getMvnDependencyVersion pom, '<dependency version property name>'
 ```
 
 * __To check if artifact version is a snapshot:__
@@ -91,8 +91,8 @@ MavenProjectBuilder is a utility to help build Maven project. If a project has d
 * __To specify project to build as well as dependency projects, and build all of them:__
 ```
 def mvnTool = new MavenTool('Maven 3.3.9')
-def mavenProjectBuilder = new MavenProjectBuilder('unitard-maria', 'https://autobuild@bitbucket.unibet.com/bitbucket/scm/taut/unitard-maria.git', "${env.branch}", mvnTool)
-mavenProjectBuilder.addDependency new Dependency('unitard-core', 'unitard.core.version', 'https://autobuild@bitbucket.unibet.com/bitbucket/scm/taut/unitard-core.git', "${env.branch}", mvnTool)
+def mavenProjectBuilder = new MavenProjectBuilder('myTestProject', 'https://github.com/henrrich/myTestProject.git', "${env.branch}", mvnTool)
+mavenProjectBuilder.addDependency new Dependency('myDependencyProject', 'mydependency.version', 'https://github.com/henrrich/myDependencyProject.git', "${env.branch}", mvnTool)
 mavenProjectBuilder.buildAndPackage this
 ```
 

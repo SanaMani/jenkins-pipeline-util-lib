@@ -1,5 +1,5 @@
 #!/usr/bin/groovy
-package com.unibet.ci
+package se.henrrich.ci
 
 class MavenProjectBuilder implements Serializable {
 
